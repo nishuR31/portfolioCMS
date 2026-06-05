@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ExperienceType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  FREELANCE
+  CONTRACT
+}
+
+enum Proficiency {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  phone    String?
+  password String  @map("hashed_password")
+  role     Role    @default(USER)
+
+  avatarUrl String?
+
+  isActive     Boolean  @default(true)
+  lastLogin    DateTime @default(now())
+  refreshToken String?
+
+  totpSecret    String?
+  isTotpEnabled Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile        Profile?
+  education      Education[]
+  experience     Experience[]
+  projects       Project[]
+  hackathons     Hackathon[]
+  skills         Skill[]
+  certifications Certification[]
+  achievements   Achievement[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+
+// ─── Portfolio Models ─────────────────────────────────────────────────────────
+
+model Profile {
+  id        String  @id @default(uuid())
+  headline  String?
+  bio       String?
+  location  String?
+  avatarUrl String?
+  resumeUrl String?
+  github    String?
+  linkedin  String?
+  twitter   String?
+  website   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Education {
+  id           String    @id @default(uuid())
+  institution  String
+  degree       String
+  fieldOfStudy String?
+  startDate    DateTime
+  endDate      DateTime?
+  isCurrent    Boolean   @default(false)
+  grade        String?
+  description  String?
+  logoUrl      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("educations")
+}
+
+model Experience {
+  id          String         @id @default(uuid())
+  company     String
+  role        String
+  type        ExperienceType @default(FULL_TIME)
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean        @default(false)
+  description String?
+  logoUrl     String?
+  companyUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("experiences")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  techStack   String[]
+  githubUrl   String?
+  liveUrl     String?
+  imageUrl    String?
+  isFeatured  Boolean  @default(false)
+  startDate   DateTime?
+  endDate     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isFeatured])
+  @@map("projects")
+}
+
+model Hackathon {
+  id             String    @id @default(uuid())
+  name           String
+  organizer      String?
+  position       String?
+  description    String?
+  date           DateTime?
+  teamSize       Int?
+  projectUrl     String?
+  certificateUrl String?
+  award          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("hackathons")
+}
+
+model Skill {
+  id          String      @id @default(uuid())
+  name        String
+  category    String
+  proficiency Proficiency @default(INTERMEDIATE)
+  iconUrl     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@map("skills")
+}
+
+model Certification {
+  id            String    @id @default(uuid())
+  name          String
+  issuer        String
+  issueDate     DateTime
+  expiryDate    DateTime?
+  credentialId  String?
+  credentialUrl String?
+  logoUrl       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("certifications")
+}
+
+model Achievement {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  date        DateTime?
+  url         String?
+  icon        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("achievements")
+}
