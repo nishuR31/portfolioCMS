@@ -1,6 +1,6 @@
 import { generateSecret, verify, generateURI } from "otplib";
 import QRCode from "qrcode";
-import { TOTP_ISSUER } from "../../config/envConfig";
+import { TOTP_ISSUER } from "../../config/envConfig.js";
 
 export function generateTotpSecret(): string {
   return generateSecret();

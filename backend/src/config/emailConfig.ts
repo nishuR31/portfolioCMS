@@ -6,7 +6,7 @@ import {
   SMTP_PASSWORD,
   SMTP_PORT,
   SMTP_USER,
-} from "./envConfig";
+} from "./envConfig.js";
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,

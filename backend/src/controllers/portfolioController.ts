@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import asyncHandler from "../utils/common/asyncHandler";
-import { sendSuccess } from "../utils/common/response";
-import { STATUS_CODES } from "../utils/common/constants";
-import PortfolioService from "../services/portfolioService";
+import asyncHandler from "../utils/common/asyncHandler.js";
+import { sendSuccess } from "../utils/common/response.js";
+import { STATUS_CODES } from "../utils/common/constants.js";
+import PortfolioService from "../services/portfolioService.js";
 import {
   CreateAchievementBody,
   CreateCertificationBody,

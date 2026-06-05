@@ -1,5 +1,5 @@
-import { User } from "../generated/prisma/client";
-import BaseRepository from "./baseRepository";
+import { User } from "../generated/prisma/client.js";
+import BaseRepository from "./baseRepository.js";
 
 export default class UserRepository extends BaseRepository<User> {
   constructor() {

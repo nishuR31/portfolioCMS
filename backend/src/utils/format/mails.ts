@@ -1,4 +1,4 @@
-import { MailTemplate } from "../../types";
+import { MailTemplate } from "../../types.js";
 
 export function renderTemplate(
   html: string,

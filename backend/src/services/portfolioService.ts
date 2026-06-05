@@ -8,7 +8,7 @@ import {
   ProjectRepository,
   SkillRepository,
 } from "../repositories/portfolioRepository";
-import UserRepository from "../repositories/userRepository";
+import UserRepository from "../repositories/userRepository.js";
 import {
   CreateAchievementBody,
   CreateCertificationBody,
@@ -26,7 +26,7 @@ import {
   UpdateSkillBody,
   UpsertProfileBody,
 } from "../types";
-import { ForbiddenError, NotFoundError } from "../utils/errors/error";
+import { ForbiddenError, NotFoundError } from "../utils/errors/error.js";
 
 // ─── Repos (singletons per service instance) ─────────────────────────────────
 

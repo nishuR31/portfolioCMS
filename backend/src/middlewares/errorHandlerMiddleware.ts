@@ -2,9 +2,9 @@
 
 import {FastifyReply,FastifyRequest} from "fastify";
 
-import { AppError } from "../utils/errors/error";
-import { NODE_ENV } from "../config/envConfig";
-import { sendError } from "../utils/common/response";
+import { AppError } from "../utils/errors/error.js";
+import { NODE_ENV } from "../config/envConfig.js";
+import { sendError } from "../utils/common/response.js";
 
 export default function errorHandler(
   err: any,

@@ -15,7 +15,7 @@ import {
   testPasslessVerify,
   verifyTotp,
 } from "../../controllers/authController";
-import { authenticate } from "../../middlewares/authMiddleware";
+import { authenticate } from "../../middlewares/authMiddleware.js";
 import { FastifyPluginAsync } from "fastify";
 
 const authRouter: FastifyPluginAsync = async (app: any) => {

@@ -1,6 +1,6 @@
-import transporter, { EMAIL_FROM } from "../../config/emailConfig";
-import { EmailOptions } from "../../types";
-import { renderTemplate, template } from "../format/mails";
+import transporter, { EMAIL_FROM } from "../../config/emailConfig.js";
+import { EmailOptions } from "../../types.js";
+import { renderTemplate, template } from "../format/mails.js";
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {

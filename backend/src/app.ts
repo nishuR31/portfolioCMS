@@ -1,11 +1,11 @@
 // // import cookieParser from "cookie-parser";
 // // import express from "express";
 // // import helmet from "helmet";
-import { STATUS_CODES } from "./utils/common/constants";
-import { NODE_ENV } from "./config/envConfig";
-import apiRouter from "./routes/apiRoutes";
-import { sendError } from "./utils/common/response";
-import fastifyApp from "./config/serverConfig";
+import { STATUS_CODES } from "./utils/common/constants.js";
+import { NODE_ENV } from "./config/envConfig.js";
+import apiRouter from "./routes/apiRoutes.js";
+import { sendError } from "./utils/common/response.js";
+import fastifyApp from "./config/serverConfig.js";
 import { FastifyReply, FastifyRequest } from "fastify";
 const app = fastifyApp;
 

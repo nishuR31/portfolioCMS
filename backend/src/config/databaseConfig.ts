@@ -1,6 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../generated/prisma/client";
-import { BCRYPT_SALT_ROUND, DATABASE_URL, NODE_ENV } from "./envConfig";
+import { PrismaClient } from "../generated/prisma/client.js";
+import { BCRYPT_SALT_ROUND, DATABASE_URL, NODE_ENV } from "./envConfig.js";
 import bcrypt from "bcrypt";
 
 const adapter = new PrismaPg({ connectionString: DATABASE_URL });

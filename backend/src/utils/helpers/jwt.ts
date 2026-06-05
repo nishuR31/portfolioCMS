@@ -1,18 +1,18 @@
-import redis from "../../config/redisConfig";
+import redis from "../../config/redisConfig.js";
 import {
   JWT_ACCESS_EXPIRY,
   JWT_ACCESS_SECRET,
   JWT_REFRESH_EXPIRY,
   JWT_REFRESH_SECRET,
 } from "../../config/envConfig";
-import { JwtPayload, TokenPair } from "../../types";
+import { JwtPayload, TokenPair } from "../../types.js";
 import jwt, { Secret } from "jsonwebtoken";
 import {
   JWT_BLACKLIST_PREFIX,
   REFRESH_TOKEN_PREFIX,
   ACCESS_TOKEN_PREFIX,
 } from "../common/constants";
-import { UnauthorizedError } from "../errors/error";
+import { UnauthorizedError } from "../errors/error.js";
 
 export function generateTokenPair(payload: JwtPayload): TokenPair {
   const accessToken = generateRefreshToken(payload);

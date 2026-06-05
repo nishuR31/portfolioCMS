@@ -1,5 +1,5 @@
-import prisma from "../config/databaseConfig";
-import { Prisma } from "../generated/prisma/client";
+import prisma from "../config/databaseConfig.js";
+import { Prisma } from "../generated/prisma/client.js";
 import {
   AppError,
   ConflictError,

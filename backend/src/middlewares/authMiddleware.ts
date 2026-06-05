@@ -2,9 +2,9 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { verifyAccessToken } from "../utils/helpers/jwt";
-import { UnauthorizedError } from "../utils/errors/error";
-import asyncHandler from "../utils/common/asyncHandler";
+import { verifyAccessToken } from "../utils/helpers/jwt.js";
+import { UnauthorizedError } from "../utils/errors/error.js";
+import asyncHandler from "../utils/common/asyncHandler.js";
 
 export const authenticate = asyncHandler(
   async (req: FastifyRequest, res: FastifyReply) => {

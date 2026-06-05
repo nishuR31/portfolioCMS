@@ -1,6 +1,6 @@
-import app from "./app";
-import { PORT, NODE_ENV } from "./config/envConfig";
-import { disconnectRedis } from "./config/redisConfig";
+import app from "./app.js";
+import { PORT, NODE_ENV } from "./config/envConfig.js";
+import { disconnectRedis } from "./config/redisConfig.js";
 
 const startServer = async () => {
   try {

@@ -1,5 +1,5 @@
-import UserRepository from "../repositories/userRepository";
-import { JwtPayload, RegisterBody, testUser, TokenPair } from "../types";
+import UserRepository from "../repositories/userRepository.js";
+import { JwtPayload, RegisterBody, testUser, TokenPair } from "../types.js";
 import {
   ConflictError,
   InternalServerError,
@@ -7,7 +7,7 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "../utils/errors/error";
-import { sendEmail, sendWelcomeEmail } from "../utils/helpers/email";
+import { sendEmail, sendWelcomeEmail } from "../utils/helpers/email.js";
 import {
   blacklistToken,
   generateAccessToken,
@@ -24,8 +24,8 @@ import {
   generateTotpSecret,
   verifyTotpToken,
 } from "../utils/helpers/totp";
-import { hash } from "../utils/helpers/hash";
-import { sendError, sendSuccess } from "../utils/common/response";
+import { hash } from "../utils/helpers/hash.js";
+import { sendError, sendSuccess } from "../utils/common/response.js";
 import {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,

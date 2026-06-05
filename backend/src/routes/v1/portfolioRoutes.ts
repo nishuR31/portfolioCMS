@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
-import { authenticate } from "../../middlewares/authMiddleware";
+import { authenticate } from "../../middlewares/authMiddleware.js";
 import {
   // Public — full portfolio
   getFullPortfolio,

@@ -2,15 +2,15 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import AuthService from "../services/authService";
-import asyncHandler from "../utils/common/asyncHandler";
-import { UnauthorizedError } from "../utils/errors/error";
-import { sendSuccess } from "../utils/common/response";
-import { STATUS_CODES } from "../utils/common/constants";
-import { LoginBody, RegisterBody } from "../types";
-import cookieOption from "../utils/common/cookieOptions";
-import { sendPasswordlessLoginEmail } from "../utils/helpers/email";
-import { buildUrl } from "../utils/helpers/buildUrl";
+import AuthService from "../services/authService.js";
+import asyncHandler from "../utils/common/asyncHandler.js";
+import { UnauthorizedError } from "../utils/errors/error.js";
+import { sendSuccess } from "../utils/common/response.js";
+import { STATUS_CODES } from "../utils/common/constants.js";
+import { LoginBody, RegisterBody } from "../types/index.js";
+import cookieOption from "../utils/common/cookieOptions.js";
+import { sendPasswordlessLoginEmail } from "../utils/helpers/email.js";
+import { buildUrl } from "../utils/helpers/buildUrl.js";
 
 const authService = new AuthService();
 

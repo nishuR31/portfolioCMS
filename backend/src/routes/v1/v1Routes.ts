@@ -1,6 +1,6 @@
 // import { Router } from "express";
-import authRouter from "./authRoutes";
-import portfolioRouter from "./portfolioRoutes";
+import authRouter from "./authRoutes.js";
+import portfolioRouter from "./portfolioRoutes.js";
 import { FastifyPluginAsync } from "fastify";
 
 const v1Router: FastifyPluginAsync = async (app: any) => {
