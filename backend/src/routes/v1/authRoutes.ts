@@ -14,7 +14,7 @@ import {
   testPassless,
   testPasslessVerify,
   verifyTotp,
-} from "../../controllers/authController";
+} from "../../controllers/authController.js";
 import { authenticate } from "../../middlewares/authMiddleware.js";
 import { FastifyPluginAsync } from "fastify";
 

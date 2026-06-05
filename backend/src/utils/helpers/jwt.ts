@@ -4,14 +4,14 @@ import {
   JWT_ACCESS_SECRET,
   JWT_REFRESH_EXPIRY,
   JWT_REFRESH_SECRET,
-} from "../../config/envConfig";
-import { JwtPayload, TokenPair } from "../../types.js";
+} from "../../config/envConfig.js";
+import { JwtPayload, TokenPair } from "../../types/index.js";
 import jwt, { Secret } from "jsonwebtoken";
 import {
   JWT_BLACKLIST_PREFIX,
   REFRESH_TOKEN_PREFIX,
   ACCESS_TOKEN_PREFIX,
-} from "../common/constants";
+} from "../common/constants.js";
 import { UnauthorizedError } from "../errors/error.js";
 
 export function generateTokenPair(payload: JwtPayload): TokenPair {
@@ -72,7 +72,7 @@ export async function blacklistToken(token: string): Promise<void> {
     if (ttl > 0) {
       await redis.setex(`${JWT_BLACKLIST_PREFIX}${token}`, ttl, "1");
     }
-  } catch {}
+  } catch { }
 }
 
 export async function blacklistTokens(
@@ -90,7 +90,7 @@ export async function blacklistTokens(
     if (ttl > 0) {
       await redis.setex(`${JWT_BLACKLIST_PREFIX}${token}`, ttl, "1");
     }
-  } catch {}
+  } catch { }
 }
 
 export async function removeRefreshToken(userId: string): Promise<void> {

@@ -1,12 +1,12 @@
 import UserRepository from "../repositories/userRepository.js";
-import { JwtPayload, RegisterBody, testUser, TokenPair } from "../types.js";
+import { JwtPayload, RegisterBody, testUser, TokenPair } from "../types/index.js";
 import {
   ConflictError,
   InternalServerError,
   NotFoundError,
   UnauthorizedError,
   ValidationError,
-} from "../utils/errors/error";
+} from "../utils/errors/error.js";
 import { sendEmail, sendWelcomeEmail } from "../utils/helpers/email.js";
 import {
   blacklistToken,
@@ -17,20 +17,20 @@ import {
   storeRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
-} from "../utils/helpers/jwt";
+} from "../utils/helpers/jwt.js";
 import bcrypt from "bcrypt";
 import {
   generateTotpQrCode,
   generateTotpSecret,
   verifyTotpToken,
-} from "../utils/helpers/totp";
+} from "../utils/helpers/totp.js";
 import { hash } from "../utils/helpers/hash.js";
 import { sendError, sendSuccess } from "../utils/common/response.js";
 import {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
-} from "../config/envConfig";
+} from "../config/envConfig.js";
 import crypto from "crypto";
 
 const userRepo = new UserRepository();

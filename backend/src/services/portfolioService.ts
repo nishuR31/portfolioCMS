@@ -7,7 +7,7 @@ import {
   ProfileRepository,
   ProjectRepository,
   SkillRepository,
-} from "../repositories/portfolioRepository";
+} from "../repositories/portfolioRepository.js";
 import UserRepository from "../repositories/userRepository.js";
 import {
   CreateAchievementBody,
@@ -25,7 +25,7 @@ import {
   UpdateProjectBody,
   UpdateSkillBody,
   UpsertProfileBody,
-} from "../types";
+} from "../types/index.js";
 import { ForbiddenError, NotFoundError } from "../utils/errors/error.js";
 
 // ─── Repos (singletons per service instance) ─────────────────────────────────
