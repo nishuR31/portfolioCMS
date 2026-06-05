@@ -51,7 +51,7 @@ import {
   createAchievement,
   updateAchievement,
   deleteAchievement,
-} from "../../controllers/portfolioController";
+} from "../../controllers/portfolioController.js";
 
 const auth = { preHandler: [authenticate] };
 
