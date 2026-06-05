@@ -8,6 +8,7 @@ RUN npm ci
 
 COPY backend/ .
 
+RUN npx prisma generate
 RUN npm run build
 
 FROM node:22-alpine AS runner
