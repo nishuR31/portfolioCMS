@@ -1,9 +1,8 @@
 ---
-
-title: Portfolio API
-emoji: 💻
-colorFrom: black
-colorTo: black
+title: portfolioCMS
+emoji: 🚀
+colorFrom: blue
+colorTo: purple
 sdk: docker
 pinned: false
--------------
+---
