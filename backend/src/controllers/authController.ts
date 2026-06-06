@@ -191,7 +191,7 @@ export const logout = asyncHandler(async (req: FastifyRequest, res: FastifyReply
 
 export const refreshToken = asyncHandler(
   async (req: RefreshTokenRequest, res: FastifyReply) => {
-    const token = req.body.refreshToken || req.cookies?.refreshToken;
+    const token = req.body?.refreshToken || req.cookies?.refreshToken;
     const tokens = await authService.refreshTokens(token as string);
 
     res.cookie("refreshToken", tokens.refreshToken, cookieOption("refresh"));
@@ -205,6 +205,16 @@ export const refreshToken = asyncHandler(
     );
   },
 );
+export const me = asyncHandler(
+  async (
+    req: FastifyRequest,
+    res: FastifyReply,
+  ) => {
+    const user = await authService.me(req.user!.id);
+    sendSuccess(res, "User fetched successfully", user, STATUS_CODES.OK);
+  },
+);
+
 
 export const changePassword = asyncHandler(
   async (

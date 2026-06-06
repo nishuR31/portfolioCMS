@@ -9,6 +9,7 @@ import {
   logout,
   passless,
   passlessVerify,
+  me,
   refreshToken,
   register,
   testPassless,
@@ -21,6 +22,7 @@ import { FastifyPluginAsync } from "fastify";
 const authRouter: FastifyPluginAsync = async (app: any) => {
   // Public routes
   app.post("/register", register);
+  app.get("/me", { preHandler: [authenticate] }, me);
   app.post("/login", login);
   app.post("/refresh-token", refreshToken);
 

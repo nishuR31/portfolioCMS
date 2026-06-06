@@ -367,6 +367,13 @@ export default class AuthService {
 
   }
 
+  async me(userId: string) {
+    const user = await userRepo.findById(userId);
+    const { password: _, refreshToken: __, totpSecret: ___, ...safeUser } = user;
+
+    return safeUser;
+  }
+
   async disableTotp(userId: string, password: string): Promise<void> {
     const user = await userRepo.findById(userId);
 

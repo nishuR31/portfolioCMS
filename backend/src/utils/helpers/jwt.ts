@@ -15,9 +15,10 @@ import {
 import { UnauthorizedError } from "../errors/error.js";
 
 export function generateTokenPair(payload: JwtPayload): TokenPair {
-  const accessToken = generateRefreshToken(payload);
 
-  const refreshToken = generateAccessToken(payload);
+  const refreshToken = generateRefreshToken(payload);
+
+  const accessToken = generateAccessToken(payload);
 
   return { accessToken, refreshToken };
 }
