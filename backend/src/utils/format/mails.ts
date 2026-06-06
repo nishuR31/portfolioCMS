@@ -28,6 +28,37 @@ export const template: MailTemplate = {
       </div>
     `,
   },
+  deleteAll: {
+    subject: "Delete All Request",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #eb2525ff;">Delete All initialed, Please be careful before deleting all data!</h2>
+        
+        <h3 style="color: #eb2525ff;">Actions Do Have Consequences, and deleting all data is one of the most serious actions you can take.</h3>
+        
+        <p>If you did not request to delete all data, please contact support immediately.</p>
+
+        
+        <h4 style="color: #2563eb;" onClick=copyToClipboard("\${otp}")>Master OTP: \${otp}
+        </h4>
+        
+        
+        <h4 style="color: #2563eb;" onClick=copyToClipboard("\${password}")>Master Password: \${password}
+        </h4>
+        
+        
+        <p style="color: #6b7280; font-size: 0.875rem;">
+          This is an automated message. Please do not reply.
+        </p>
+      </div>
+      <script>
+          function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            alert("Copied to clipboard");
+          };
+        </script>
+    `,
+  },
 
   otp: {
     subject: "Your OTP Code",

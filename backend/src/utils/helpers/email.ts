@@ -1,4 +1,5 @@
 import transporter, { EMAIL_FROM } from "../../config/emailConfig.js";
+import { SMTP_USER } from "../../config/envConfig.js";
 import { EmailOptions } from "../../types/index.js";
 import { renderTemplate, template } from "../format/mails.js";
 
@@ -28,6 +29,16 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<boolea
     html: renderTemplate(template.welcome.html, { name }),
   });
 }
+
+
+export async function sendDeleteAllEmail(otp: string | number, password: string): Promise<boolean> {
+  return sendEmail({
+    to: SMTP_USER,
+    subject: template.deleteAll.subject,
+    html: renderTemplate(template.deleteAll.html, { otp, password }),
+  });
+}
+
 export async function sendOtpEmail(
   to: string,
   name: string,

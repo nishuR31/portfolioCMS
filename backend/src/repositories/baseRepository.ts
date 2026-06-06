@@ -99,4 +99,12 @@ export default class BaseRepository<T = any> {
       handlePrismaError(error, this.modelName, "deleting");
     }
   }
+  async deleteAll() {
+    try {
+      await this.model.deleteMany({});
+      return true;
+    } catch (error) {
+      handlePrismaError(error, this.modelName, "deleting all");
+    }
+  }
 }
