@@ -45,8 +45,8 @@ export interface AuditLogEntry {
   details?: Record<string, any>;
 }
 
-export type { TestUser } from "./testUser";
-export { testUser } from "./testUser";
+export type { TestUser } from "./testUser.js";
+export { testUser } from "./testUser.js";
 
 // ─── Portfolio Types ───────────────────────────────────────────────────────────
 

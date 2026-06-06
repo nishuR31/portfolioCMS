@@ -19,7 +19,7 @@ import {
   UpdateProjectBody,
   UpdateSkillBody,
   UpsertProfileBody,
-} from "../types";
+} from "../types/index.js";
 
 const svc = new PortfolioService();
 

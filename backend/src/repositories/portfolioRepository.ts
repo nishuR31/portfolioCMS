@@ -8,7 +8,7 @@ import type {
   Skill,
   Certification,
   Achievement,
-} from "../generated/prisma/client";
+} from "../generated/prisma/client.js";
 
 // ─── Profile ──────────────────────────────────────────────────────────────────
 

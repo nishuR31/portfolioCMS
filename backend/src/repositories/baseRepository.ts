@@ -5,7 +5,7 @@ import {
   ConflictError,
   InternalServerError,
   NotFoundError,
-} from "../utils/errors/error";
+} from "../utils/errors/error.js";
 
 function handlePrismaError(error: any, modelName: string, operation: string): never {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
