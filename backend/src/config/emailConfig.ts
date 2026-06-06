@@ -7,6 +7,8 @@ import {
   SMTP_PORT,
   SMTP_USER,
 } from "./envConfig.js";
+import dns from "node:dns";
+
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
@@ -20,17 +22,27 @@ const transporter = nodemailer.createTransport({
 
 export const EMAIL_FROM = `"${SMTP_FROM_NAME}" <${SMTP_FROM_EMAIL}>`;
 
-transporter
-  .verify()
-  .then(() => console.info("SMTP transporter verified"))
-  .catch((err) => {
-    console.log({
-      user: SMTP_USER,
-      passLength: SMTP_PASSWORD?.length,
-    });
-    console.warn("SMTP verification failed (emails will not send)", {
-      error: err.message,
-    });
-  });
+dns.setDefaultResultOrder("ipv4first");
+console.log({
+  user: SMTP_USER,
+  passLength: SMTP_PASSWORD?.length,
+});
+// transporter
+//   .verify()
+//   .then(() => {
+//     console.log({
+//       user: SMTP_USER,
+//       passLength: SMTP_PASSWORD?.length,
+//     }); console.info("SMTP transporter verified")
+//   })
+//   .catch((err) => {
+//     console.log({
+//       user: SMTP_USER,
+//       passLength: SMTP_PASSWORD?.length,
+//     });
+//     console.warn("SMTP verification failed (emails will not send)", {
+//       error: err.message,
+//     });
+//   });
 
 export default transporter;
