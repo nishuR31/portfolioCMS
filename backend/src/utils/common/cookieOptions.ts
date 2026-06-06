@@ -7,8 +7,8 @@ type CookieOptions = {
 
 let cookieOption = (mode: "access" | "refresh" = "refresh"): CookieOptions => ({
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: true,
+  sameSite: "none",
   maxAge: mode === "refresh" ? 7 * 24 * 60 * 60 * 1000 : 1 * 24 * 60 * 60 * 1000,
 });
 

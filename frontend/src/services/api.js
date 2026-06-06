@@ -17,8 +17,8 @@
  * The frontend NEVER stores, reads, or manages tokens directly.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
-
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = `${BACKEND_URL}/api/v1`;
 // ─── User display state (non-sensitive) ──────────────────────────────────────
 let _user = null;
 
