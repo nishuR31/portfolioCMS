@@ -7,7 +7,7 @@ import {
   SMTP_PORT,
   SMTP_USER,
 } from "./envConfig.js";
-import dns from "node:dns";
+// import dns from "node:dns";
 
 
 const transporter = nodemailer.createTransport({
@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
 
 export const EMAIL_FROM = `"${SMTP_FROM_NAME}" <${SMTP_FROM_EMAIL}>`;
 
-dns.setDefaultResultOrder("ipv4first");
+// dns.setDefaultResultOrder("ipv4first");
 console.log({
   user: SMTP_USER,
   passLength: SMTP_PASSWORD?.length,

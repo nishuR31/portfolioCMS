@@ -4,7 +4,7 @@ import { disconnectRedis } from "./config/redisConfig.js";
 
 const startServer = async () => {
   try {
-    const address = await app.listen({ port: PORT });
+    const address = await app.listen({ port: PORT, host: "0.0.0.0", });
     console.log(`AuthService started`);
     console.log(`   Environment : ${NODE_ENV}`);
     console.log(`   Port        : ${PORT}`);
