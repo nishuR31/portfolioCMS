@@ -215,19 +215,37 @@ export const me = asyncHandler(
       throw new UnauthorizedError("You are not authorized, Please try loggin in again.");
     }
     const user = await authService.me(userId);
+
     sendSuccess(res, "User fetched successfully", user, STATUS_CODES.OK);
   },
 );
 
 export const username = asyncHandler(
   async (
-    req: FastifyRequest<{ Params: { username: string } }>,
+    req: FastifyRequest<{ Params: { username?: string } }>,
     res: FastifyReply,
   ) => {
+    let username = req.user?.username;
+    if (!username) {
+      throw new Error("Username not found, May be you are not logined.");
+    }
     if (req.user?.username && req.user?.username !== req.params.username) {
+      throw new ForbiddenError("You are not authorized to fetch other user's profile");
+    }
+    const user = await authService.username(username);
+    sendSuccess(res, "User fetched successfully", user, STATUS_CODES.OK);
+  },
+);
+
+export const id = asyncHandler(
+  async (
+    req: FastifyRequest<{ Params: { id?: string } }>,
+    res: FastifyReply,
+  ) => {
+    if (req.user?.id && req.user?.id !== req.params.id) {
       throw new ForbiddenError("You are not authorized to fetch this user");
     }
-    const user = await authService.username(req.params!.username);
+    const user = await authService.id(req.params!.id!);
     sendSuccess(res, "User fetched successfully", user, STATUS_CODES.OK);
   },
 );

@@ -148,11 +148,11 @@ export default class AuthService {
   async register(data: RegisterBody): Promise<{ user: any; tokens: TokenPair }> {
     const existingEmail = await userRepo.findByEmail(data.email);
     if (existingEmail) {
-      throw new ConflictError("A user with this email already exists.");
+      throw new ConflictError("A user with this email already exists. Please login.");
     }
-    const existingUsername = await userRepo.findByUsername(data.username);
+    const existingUsername = await userRepo.findByUsername(data.username!);
     if (existingUsername) {
-      throw new ConflictError("A user with this username already exists.");
+      throw new ConflictError("User with this username already exists. Please use a different username.");
     }
 
     const user = await userRepo.create({
@@ -161,7 +161,6 @@ export default class AuthService {
       email: data.email,
       password: data.password,
       phone: data.phone,
-      gender: data.gender,
     });
 
     const payload: JwtPayload = {
@@ -174,7 +173,7 @@ export default class AuthService {
     await storeRefreshToken(user.id, tokens.refreshToken);
     await userRepo.updateRefreshToken(user.id, tokens.refreshToken);
 
-    sendWelcomeEmail(user.email, user.name).catch(() => { });
+    sendWelcomeEmail(user.email, user.username).catch(() => { });
 
     const { password: _, refreshToken: __, totpSecret: ___, ...safeUser } = user;
 
@@ -394,7 +393,17 @@ export default class AuthService {
   }
 
   async username(username: string) {
-    const user = await userRepo.findOne(username);
+    const user = await userRepo.findByUsername(username);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    const { password: _, refreshToken: __, totpSecret: ___, ...safeUser } = user;
+
+    return safeUser;
+  }
+
+  async id(id: string) {
+    const user = await userRepo.findById(id);
     if (!user) {
       throw new NotFoundError('User not found');
     }

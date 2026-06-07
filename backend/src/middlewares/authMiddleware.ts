@@ -9,9 +9,6 @@ import asyncHandler from "../utils/common/asyncHandler.js";
 export const authenticate = asyncHandler(
   async (req: FastifyRequest, res: FastifyReply) => {
     let decoded: any;
-    // Priority order:
-    //  1. accessToken httpOnly cookie  (set on login — survives page refreshes)
-    //  2. Authorization: Bearer header (API clients / mobile)
     const token =
       req.cookies?.accessToken || req.cookies?.refreshToken ||
       (req.headers.authorization?.startsWith("Bearer ")
@@ -24,6 +21,7 @@ export const authenticate = asyncHandler(
 
     try { decoded = await verifyAccessToken(token) }
     catch (err) { decoded = verifyRefreshToken(token); }
+    console.table(decoded);
 
     req.user = {
       username: decoded.username,

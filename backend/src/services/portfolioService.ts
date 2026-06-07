@@ -103,7 +103,7 @@ export default class PortfolioService {
       throw new NotFoundError("User not found");
     }
     const { id } = user;
-    const profile = await profileRepo.findOne({ where: { userId: id } });
+    const profile = await profileRepo.findOne({ id });
     if (!profile) {
       throw new NotFoundError("Profile not found");
     }

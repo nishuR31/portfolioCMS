@@ -14,12 +14,11 @@ export type MailTemplate = Record<
 >;
 
 export type RegisterBody = {
-  name: string;
+  name?: string;
   username: string;
   email: string;
   password: string;
   phone?: string;
-  gender: string;
 };
 export type LoginBody = {
   identifier: string;

@@ -15,6 +15,8 @@ import {
   testPassless,
   testPasslessVerify,
   verifyTotp,
+  id,
+  username,
 } from "../../controllers/authController.js";
 import { authenticate } from "../../middlewares/authMiddleware.js";
 import { FastifyPluginAsync } from "fastify";
@@ -22,8 +24,10 @@ import { FastifyPluginAsync } from "fastify";
 const authRouter: FastifyPluginAsync = async (app: any) => {
   // Public routes
   app.post("/register", register);
+  app.get("/id/:id", { preHandler: [authenticate] }, id);
   app.get("/me", { preHandler: [authenticate] }, me);
-  app.get("/:username", { preHandler: [authenticate] }, me);
+  app.get("/:username", { preHandler: [authenticate] }, username);
+
 
   app.post("/login", login);
   app.post("/refresh-token", refreshToken);

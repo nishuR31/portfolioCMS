@@ -40,6 +40,7 @@ export default function PortfolioViewer({ username }) {
       try {
         const res = await api.portfolio.getFull(username);
         setData(res.data);
+        console.table(res.data);
       } catch (err) {
         console.error(err);
         setError(err.message || "Failed to load the public portfolio.");

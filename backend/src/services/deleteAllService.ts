@@ -80,9 +80,9 @@ export async function confirmDelete(
     );
   }
 
-  clearDeleteAllTokens();
 
   await userRepo.deleteAll();
+  clearDeleteAllTokens();
 
   return "All data wiped.";
 }

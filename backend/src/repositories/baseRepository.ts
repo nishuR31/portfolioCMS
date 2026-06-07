@@ -52,14 +52,14 @@ export default class BaseRepository<T = any> {
     }
   }
 
-  async findById(userId: string, options: any = {}) {
+  async findById(id: string, options: any = {}) {
     try {
       const record = await this.model.findUnique({
-        where: { id: userId },
+        where: { id },
         ...options,
       });
       if (!record) {
-        throw new NotFoundError(`${this.modelName} with ID ${userId} not found`);
+        throw new NotFoundError(`${this.modelName} with ID ${id} not found`);
       }
       return record;
     } catch (error) {

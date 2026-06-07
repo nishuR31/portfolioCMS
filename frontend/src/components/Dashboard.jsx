@@ -50,11 +50,11 @@ export default function Dashboard({ user, onLogout }) {
         setLoading(false);
         return;
       }
-      
+
       switch (tab) {
         case "profile":
           const prof = await api.portfolio.getProfile(user.username);
-          if (prof.data) setProfile(prof.data);
+          if (prof.data) setProfile(prof.data || []);
           break;
         case "education":
           const edu = await api.portfolio.getEducation(user.username);

@@ -189,7 +189,7 @@ export default function Auth({ onAuthSuccess }) {
               <div className="form-group" style={{ marginBottom: "1.5rem" }}>
                 <label className="form-label" htmlFor="password">Password</label>
                 <div style={{ position: "relative", display: "flex", alignItems: "center" }}><input
-                  type="password"
+                  type={isPasswordVisible ? "text" : "password"}
                   id="password"
                   name="password"
                   className="form-input"

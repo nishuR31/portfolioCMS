@@ -18,7 +18,7 @@ export class ProfileRepository extends BaseRepository<Profile> {
   }
 
   async findByUserId(userId: string): Promise<Profile | null> {
-    return this.findOne({ userId });
+    return this.findOne({ id: userId });
   }
 
   async upsert(userId: string, data: Partial<Profile>): Promise<Profile> {
@@ -38,7 +38,7 @@ export class EducationRepository extends BaseRepository<Education> {
   }
 
   async findAllByUserId(userId: string): Promise<Education[]> {
-    return this.findAll({ where: { userId }, orderBy: { startDate: "desc" } });
+    return this.findAll({ where: { id: userId }, orderBy: { startDate: "desc" } });
   }
 }
 
@@ -50,7 +50,7 @@ export class ExperienceRepository extends BaseRepository<Experience> {
   }
 
   async findAllByUserId(userId: string): Promise<Experience[]> {
-    return this.findAll({ where: { userId }, orderBy: { startDate: "desc" } });
+    return this.findAll({ where: { id: userId }, orderBy: { startDate: "desc" } });
   }
 }
 
@@ -62,12 +62,12 @@ export class ProjectRepository extends BaseRepository<Project> {
   }
 
   async findAllByUserId(userId: string): Promise<Project[]> {
-    return this.findAll({ where: { userId }, orderBy: { createdAt: "desc" } });
+    return this.findAll({ where: { id: userId }, orderBy: { createdAt: "desc" } });
   }
 
   async findFeaturedByUserId(userId: string): Promise<Project[]> {
     return this.findAll({
-      where: { userId, isFeatured: true },
+      where: { id: userId, isFeatured: true },
       orderBy: { createdAt: "desc" },
     });
   }
@@ -81,7 +81,7 @@ export class HackathonRepository extends BaseRepository<Hackathon> {
   }
 
   async findAllByUserId(userId: string): Promise<Hackathon[]> {
-    return this.findAll({ where: { userId }, orderBy: { date: "desc" } });
+    return this.findAll({ where: { id: userId }, orderBy: { date: "desc" } });
   }
 }
 
@@ -93,11 +93,11 @@ export class SkillRepository extends BaseRepository<Skill> {
   }
 
   async findAllByUserId(userId: string): Promise<Skill[]> {
-    return this.findAll({ where: { userId }, orderBy: { category: "asc" } });
+    return this.findAll({ where: { id: userId }, orderBy: { category: "asc" } });
   }
 
   async findByCategory(userId: string, category: string): Promise<Skill[]> {
-    return this.findAll({ where: { userId, category } });
+    return this.findAll({ where: { id: userId, category } });
   }
 }
 
@@ -109,7 +109,7 @@ export class CertificationRepository extends BaseRepository<Certification> {
   }
 
   async findAllByUserId(userId: string): Promise<Certification[]> {
-    return this.findAll({ where: { userId }, orderBy: { issueDate: "desc" } });
+    return this.findAll({ where: { id: userId }, orderBy: { issueDate: "desc" } });
   }
 }
 
@@ -121,6 +121,6 @@ export class AchievementRepository extends BaseRepository<Achievement> {
   }
 
   async findAllByUserId(userId: string): Promise<Achievement[]> {
-    return this.findAll({ where: { userId }, orderBy: { date: "desc" } });
+    return this.findAll({ where: { id: userId }, orderBy: { date: "desc" } });
   }
 }
