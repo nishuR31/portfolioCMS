@@ -118,9 +118,9 @@ export default class AuthService {
       const generatedPassword = await hash(crypto.randomUUID());
       user = await userRepo.create({
         name: profile.name || profile.email.split("@")[0],
+        username: profile.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "") + Math.floor(Math.random() * 1000),
         email: profile.email,
         password: generatedPassword,
-        role: "USER",
         avatarUrl: profile.picture,
       });
     } else {
@@ -134,7 +134,7 @@ export default class AuthService {
     const payload: JwtPayload = {
       id: user.id,
       email: user.email,
-      role: user.role,
+      username: user.username!,
     };
     const tokens = generateTokenPair(payload);
 
@@ -146,13 +146,18 @@ export default class AuthService {
   }
 
   async register(data: RegisterBody): Promise<{ user: any; tokens: TokenPair }> {
-    const existing = await userRepo.findByEmail(data.email);
-    if (existing) {
+    const existingEmail = await userRepo.findByEmail(data.email);
+    if (existingEmail) {
       throw new ConflictError("A user with this email already exists.");
+    }
+    const existingUsername = await userRepo.findByUsername(data.username);
+    if (existingUsername) {
+      throw new ConflictError("A user with this username already exists.");
     }
 
     const user = await userRepo.create({
       name: data.name,
+      username: data.username,
       email: data.email,
       password: data.password,
       phone: data.phone,
@@ -162,7 +167,7 @@ export default class AuthService {
     const payload: JwtPayload = {
       id: user.id,
       email: user.email,
-      role: user.role,
+      username: user.username!,
     };
     const tokens = generateTokenPair(payload);
 
@@ -171,25 +176,31 @@ export default class AuthService {
 
     sendWelcomeEmail(user.email, user.name).catch(() => { });
 
-
     const { password: _, refreshToken: __, totpSecret: ___, ...safeUser } = user;
 
     return { user: safeUser, tokens };
   }
 
   async login(
-    email: string,
+    identifier: string,
     password: string,
     totpToken?: string,
   ): Promise<{ user: any; tokens: TokenPair; requireTotp?: boolean }> {
-    const user = await userRepo.findByEmail(email);
-    if (!user) throw new UnauthorizedError("Invalid email or password.");
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+    let user;
+    if (isEmail) {
+      user = await userRepo.findByEmail(identifier);
+    } else {
+      user = await userRepo.findByUsername(identifier);
+    }
+
+    if (!user) throw new UnauthorizedError("Invalid credentials.");
     if (!user.isActive) {
       throw new UnauthorizedError("Account is deactivated. Contact admin.");
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new UnauthorizedError("Invalid email or password.");
+    if (!isMatch) throw new UnauthorizedError("Invalid credentials.");
 
     if (user.isTotpEnabled) {
       if (!totpToken) {
@@ -204,10 +215,15 @@ export default class AuthService {
       }
     }
 
+    if (!user.username) {
+      const generatedUsername = user.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "") + Math.floor(Math.random() * 10000);
+      user = await userRepo.update(user.id, { username: generatedUsername });
+    }
+
     const payload: JwtPayload = {
       id: user.id,
       email: user.email,
-      role: user.role,
+      username: user.username!,
     };
     const tokens = generateTokenPair(payload);
 
@@ -229,57 +245,57 @@ export default class AuthService {
 
   async passless(
     email: string,
-  ): Promise<{ email: string; name?: string; token: string; role: string }> {
+  ): Promise<{ email: string; name?: string; token: string; username: string }> {
     let user = await userRepo.findByEmail(email);
     if (!user) throw new NotFoundError("User not found with this email");
     let accessToken = generateAccessToken({
       id: user.id,
       email: user.email,
-      role: user.role,
+      username: user?.username!,
     });
-    let role = await hash(user.role);
-    return { email: user?.email, name: user?.name ?? "user", token: accessToken, role };
+    let hashedUsername = await hash(user.username!);
+    return { email: user?.email, name: user?.name ?? "user", token: accessToken, username: hashedUsername };
   }
 
   async testPassless(): Promise<{
     email: string;
     name?: string;
     token: string;
-    role: string;
+    username: string;
   }> {
     let user = testUser;
     let accessToken = generateAccessToken({
       id: user.id,
       email: user.email,
-      role: user.role,
+      username: user?.username!,
     });
-    let role = await hash(user.role);
-    return { email: user?.email, name: user?.name ?? "User", token: accessToken, role };
+    let hashedUsername = await hash(user.username!);
+    return { email: user?.email, username: user?.username ?? "User", token: accessToken };
   }
 
-  async passlessVerify(token: string, userRole: string): Promise<boolean> {
-    let { id, email, role } = await verifyAccessToken(token);
-    let tamperedRole = await bcrypt.compare(role, userRole);
-    if (!tamperedRole) throw new UnauthorizedError("Url is tampered");
+  async passlessVerify(token: string, hashedUsername: string): Promise<boolean> {
+    let { id, email, username: _username } = await verifyAccessToken(token);
+    let tamperedUsername = await bcrypt.compare(_username, hashedUsername);
+    if (!tamperedUsername) throw new UnauthorizedError("Url is tampered");
     let user = await userRepo.findByEmail(email);
     if (!user) throw new NotFoundError("User not found with this email");
-    let validRole = bcrypt.compare(user.role, userRole);
-    let verified = user.id === id && user.email === email && validRole;
+    let validUsername = await bcrypt.compare(user.username!, hashedUsername);
+    let verified = user.id === id && user.email === email && validUsername;
     return verified;
   }
 
-  async testPasslessVerify(token: string, userRole: string): Promise<boolean> {
+  async testPasslessVerify(token: string, userUsername: string): Promise<boolean> {
     let decoded = await verifyAccessToken(token);
 
     if (!decoded) throw new UnauthorizedError("Invalid or expired tokens");
-    let { email, id, role } = decoded;
-    console.log(role, userRole);
+    let { email, id, username: _username } = decoded;
+    console.log(_username, userUsername);
 
     let user = testUser;
-    let tamperedRole = await bcrypt.compare(role, userRole);
-    if (!tamperedRole) throw new UnauthorizedError("Tampered Role", { tamperedRole });
-    let validRole = bcrypt.compare(user.role, userRole);
-    let verified = user.id === id && user.email === email && validRole;
+    let tamperedUsername = await bcrypt.compare(_username, userUsername);
+    if (!tamperedUsername) throw new UnauthorizedError("Tampered Username", { tamperedUsername });
+    let validUsername = await bcrypt.compare(user.username!, userUsername);
+    let verified = user.id === id && user.email === email && validUsername;
     return verified;
   }
 
@@ -297,7 +313,7 @@ export default class AuthService {
     const payload: JwtPayload = {
       id: user.id,
       email: user.email,
-      role: user.role,
+      username: user.username!,
     };
     const tokens = generateTokenPair(payload);
 
@@ -369,6 +385,19 @@ export default class AuthService {
 
   async me(userId: string) {
     const user = await userRepo.findById(userId);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    const { password: _, refreshToken: __, totpSecret: ___, ...safeUser } = user;
+
+    return safeUser;
+  }
+
+  async username(username: string) {
+    const user = await userRepo.findOne(username);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
     const { password: _, refreshToken: __, totpSecret: ___, ...safeUser } = user;
 
     return safeUser;

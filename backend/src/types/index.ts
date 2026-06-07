@@ -15,13 +15,14 @@ export type MailTemplate = Record<
 
 export type RegisterBody = {
   name: string;
+  username: string;
   email: string;
   password: string;
   phone?: string;
   gender: string;
 };
 export type LoginBody = {
-  email: string;
+  identifier: string;
   password: string;
   totpToken: string | any;
 };
@@ -29,7 +30,7 @@ export type LoginBody = {
 export interface JwtPayload {
   id: string;
   email: string;
-  role: string;
+  username: string;
 }
 
 export interface TokenPair {

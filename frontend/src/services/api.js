@@ -4,86 +4,53 @@ const BACKEND_URL =
 const BASE_URL = `${BACKEND_URL}/api/v1`;
 
 let _user = null;
-let _refreshPromise = null;
 
-export const getCurrentUser = () => _user;
-export const setAuthSession = (user) => { _user = user; };
-export const clearAuthSession = () => { _user = null; };
-
+export const getCurrentUser = async () => {
+  try {
+    if (_user)
+      return _user;
+    const res = await api.auth.me();
+    _user = res.data || res.user || null;
+    return _user;
+  } catch (error) {
+    console.log("Error fetching user:", error);
+    return null;
+  }
+};
+export const clearCurrentUser = () => { _user = null; };
 export const setCurrentUser = (user) => {
   _user = user;
 };
 
-async function silentRefresh() {
-  if (_refreshPromise) return _refreshPromise;
 
-  _refreshPromise = (async () => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}/auth/refresh-token`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        _user = null;
-
-        window.dispatchEvent(
-          new CustomEvent("auth-expired")
-        );
-
-        return false;
-      }
-
-      return true;
-    } catch {
-      _user = null;
-
-      window.dispatchEvent(
-        new CustomEvent("auth-expired")
-      );
-
-      return false;
-    } finally {
-      _refreshPromise = null;
-    }
-  })();
-
-  return _refreshPromise;
-}
 
 async function request(
   path,
   options = {},
   isRetry = false
 ) {
-  const response = await fetch(
-    `${BASE_URL}${path}`,
-    {
-      credentials: "include",
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-    }
-  );
+  const response = await fetch(`${BASE_URL}${path}`, {
+    credentials: "include",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+  });
 
+  // If we get a 401 and haven't retried yet, attempt token refresh
   if (response.status === 401 && !isRetry) {
-    const refreshed = await silentRefresh();
-
-    if (refreshed) {
+    // Try to refresh tokens
+    const refreshRes = await fetch(`${BASE_URL}/auth/refresh-token`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (refreshRes.ok) {
+      // Refresh succeeded, retry original request once
       return request(path, options, true);
     }
-
-    const err = new Error(
-      "Session expired. Please login again."
-    );
+    // Refresh failed – propagate original 401 error
+    const err = new Error("Session expired. Please login again.");
     err.status = 401;
     throw err;
   }
@@ -133,12 +100,18 @@ export const api = {
     me: async () => {
       const data = await request("/auth/me");
 
-      if (data?.data?.user)
-        _user = data.data.user;
+      if (data?.data)
+        _user = data.data;
 
       return data;
     },
+    username: async (username) => {
+      const data = await request(`/auth/${username}`);
+      if (data?.data)
+        _user = data.data;
 
+      return data;
+    },
     logout: async () => {
       const data = await request(
         "/auth/logout",
@@ -178,47 +151,47 @@ export const api = {
   },
 
   portfolio: {
-    getFull: (userId) =>
-      request(`/portfolio/user/${userId}`),
+    getFull: (username) =>
+      request(`/portfolio/user/${username}`),
 
-    getProfile: (userId) =>
+    getProfile: (username) =>
       request(
-        `/portfolio/user/${userId}/profile`
+        `/portfolio/user/${username}/profile`
       ),
 
-    getEducation: (userId) =>
+    getEducation: (username) =>
       request(
-        `/portfolio/user/${userId}/education`
+        `/portfolio/user/${username}/education`
       ),
 
-    getExperience: (userId) =>
+    getExperience: (username) =>
       request(
-        `/portfolio/user/${userId}/experience`
+        `/portfolio/user/${username}/experience`
       ),
 
-    getProjects: (userId) =>
+    getProjects: (username) =>
       request(
-        `/portfolio/user/${userId}/projects`
+        `/portfolio/user/${username}/projects`
       ),
 
-    getHackathons: (userId) =>
+    getHackathons: (username) =>
       request(
-        `/portfolio/user/${userId}/hackathons`
+        `/portfolio/user/${username}/hackathons`
       ),
 
-    getSkills: (userId) =>
+    getSkills: (username) =>
       request(
-        `/portfolio/user/${userId}/skills`
+        `/portfolio/user/${username}/skills`
       ),
 
-    getCertifications: (userId) =>
+    getCertifications: (username) =>
       request(
-        `/portfolio/user/${userId}/certifications`
+        `/portfolio/user/${username}/certifications`
       ),
 
-    getAchievements: (userId) =>
+    getAchievements: (username) =>
       request(
-        `/portfolio/user/${userId}/achievements`
+        `/portfolio/user/${username}/achievements`
       ),
 
     upsertProfile: (body) =>

@@ -57,16 +57,16 @@ const auth = { preHandler: [authenticate] };
 
 const portfolioRouter: FastifyPluginAsync = async (app) => {
   // ── Public: full portfolio ──────────────────────────────────────────────────
-  app.get("/user/:userId", getFullPortfolio);
+  app.get("/user/:username", getFullPortfolio);
 
   // ── Public: profile ────────────────────────────────────────────────────────
-  app.get("/user/:userId/profile", getProfile);
+  app.get("/user/:username/profile", getProfile);
 
   // ── Authenticated: profile ─────────────────────────────────────────────────
   app.put("/profile", auth, upsertProfile);
 
   // ── Public: education ──────────────────────────────────────────────────────
-  app.get("/user/:userId/education", getAllEducation);
+  app.get("/user/:username/education", getAllEducation);
 
   // ── Authenticated: education ───────────────────────────────────────────────
   app.post("/education", auth, createEducation);
@@ -74,7 +74,7 @@ const portfolioRouter: FastifyPluginAsync = async (app) => {
   app.delete("/education/:id", auth, deleteEducation);
 
   // ── Public: experience ─────────────────────────────────────────────────────
-  app.get("/user/:userId/experience", getAllExperience);
+  app.get("/user/:username/experience", getAllExperience);
 
   // ── Authenticated: experience ──────────────────────────────────────────────
   app.post("/experience", auth, createExperience);
@@ -82,8 +82,8 @@ const portfolioRouter: FastifyPluginAsync = async (app) => {
   app.delete("/experience/:id", auth, deleteExperience);
 
   // ── Public: projects ───────────────────────────────────────────────────────
-  app.get("/user/:userId/projects", getAllProjects);
-  app.get("/user/:userId/projects/featured", getFeaturedProjects);
+  app.get("/user/:username/projects", getAllProjects);
+  app.get("/user/:username/projects/featured", getFeaturedProjects);
 
   // ── Authenticated: projects ────────────────────────────────────────────────
   app.post("/projects", auth, createProject);
@@ -91,7 +91,7 @@ const portfolioRouter: FastifyPluginAsync = async (app) => {
   app.delete("/projects/:id", auth, deleteProject);
 
   // ── Public: hackathons ─────────────────────────────────────────────────────
-  app.get("/user/:userId/hackathons", getAllHackathons);
+  app.get("/user/:username/hackathons", getAllHackathons);
 
   // ── Authenticated: hackathons ──────────────────────────────────────────────
   app.post("/hackathons", auth, createHackathon);
@@ -99,8 +99,8 @@ const portfolioRouter: FastifyPluginAsync = async (app) => {
   app.delete("/hackathons/:id", auth, deleteHackathon);
 
   // ── Public: skills ─────────────────────────────────────────────────────────
-  app.get("/user/:userId/skills", getAllSkills);
-  app.get("/user/:userId/skills/category/:category", getSkillsByCategory);
+  app.get("/user/:username/skills", getAllSkills);
+  app.get("/user/:username/skills/category/:category", getSkillsByCategory);
 
   // ── Authenticated: skills ──────────────────────────────────────────────────
   app.post("/skills", auth, createSkill);
@@ -108,7 +108,7 @@ const portfolioRouter: FastifyPluginAsync = async (app) => {
   app.delete("/skills/:id", auth, deleteSkill);
 
   // ── Public: certifications ─────────────────────────────────────────────────
-  app.get("/user/:userId/certifications", getAllCertifications);
+  app.get("/user/:username/certifications", getAllCertifications);
 
   // ── Authenticated: certifications ──────────────────────────────────────────
   app.post("/certifications", auth, createCertification);
@@ -116,7 +116,7 @@ const portfolioRouter: FastifyPluginAsync = async (app) => {
   app.delete("/certifications/:id", auth, deleteCertification);
 
   // ── Public: achievements ───────────────────────────────────────────────────
-  app.get("/user/:userId/achievements", getAllAchievements);
+  app.get("/user/:username/achievements", getAllAchievements);
 
   // ── Authenticated: achievements ────────────────────────────────────────────
   app.post("/achievements", auth, createAchievement);

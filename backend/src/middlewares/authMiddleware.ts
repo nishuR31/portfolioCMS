@@ -23,12 +23,12 @@ export const authenticate = asyncHandler(
     }
 
     try { decoded = await verifyAccessToken(token) }
-    catch (err) { decoded = await verifyRefreshToken(token); }
+    catch (err) { decoded = verifyRefreshToken(token); }
 
     req.user = {
+      username: decoded.username,
       id: decoded.id,
       email: decoded.email,
-      role: decoded.role,
     };
   },
 );

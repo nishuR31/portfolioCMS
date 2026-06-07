@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
-import { 
-  Globe, FileText, MapPin, Briefcase, GraduationCap, Code, Trophy, 
+import {
+  Globe, FileText, MapPin, Briefcase, GraduationCap, Code, Trophy,
   ShieldAlert, Award, Calendar, ExternalLink
 } from "lucide-react";
 
@@ -28,7 +28,7 @@ const Twitter = ({ size = 20, ...props }) => (
 );
 
 
-export default function PortfolioViewer({ userId }) {
+export default function PortfolioViewer({ username }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -38,7 +38,7 @@ export default function PortfolioViewer({ userId }) {
       setLoading(true);
       setError("");
       try {
-        const res = await api.portfolio.getFull(userId);
+        const res = await api.portfolio.getFull(username);
         setData(res.data);
       } catch (err) {
         console.error(err);
@@ -47,10 +47,10 @@ export default function PortfolioViewer({ userId }) {
         setLoading(false);
       }
     }
-    if (userId) {
+    if (username) {
       fetchPortfolio();
     }
-  }, [userId]);
+  }, [username]);
 
   if (loading) {
     return (
@@ -106,16 +106,16 @@ export default function PortfolioViewer({ userId }) {
 
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "3rem 1.5rem", display: "flex", flexDirection: "column", gap: "3rem", width: "100%" }}>
-      
+
       {/* Profile/Hero Section */}
       <header className="glass-panel animate-fade-in" style={{ padding: "3rem 2rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "1.5rem" }}>
-        
+
         {/* Avatar */}
         {profile?.avatarUrl ? (
-          <img 
-            src={profile.avatarUrl} 
-            alt={user.name} 
-            style={{ width: "130px", height: "130px", borderRadius: "50%", objectFit: "cover", border: "4px solid rgba(99, 102, 241, 0.4)", boxShadow: "var(--shadow-glow)" }} 
+          <img
+            src={profile.avatarUrl}
+            alt={user.name}
+            style={{ width: "130px", height: "130px", borderRadius: "50%", objectFit: "cover", border: "4px solid rgba(99, 102, 241, 0.4)", boxShadow: "var(--shadow-glow)" }}
           />
         ) : (
           <div style={{ width: "130px", height: "130px", borderRadius: "50%", background: "var(--primary-gradient)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem", fontWeight: "700", border: "4px solid rgba(255,255,255,0.1)", boxShadow: "var(--shadow-glow)" }}>
@@ -179,7 +179,7 @@ export default function PortfolioViewer({ userId }) {
 
       {/* Experience & Education Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }} className="grid-2 animate-fade-in">
-        
+
         {/* Experience Timeline */}
         {experience && experience.length > 0 && (
           <section>
@@ -291,25 +291,25 @@ export default function PortfolioViewer({ userId }) {
                 <h4 style={{ color: "var(--text-primary)", fontWeight: "600", fontSize: "1rem", marginBottom: "0.75rem" }}>{cat}</h4>
                 <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
                   {skillsByCategory[cat].map((skill) => (
-                    <div 
-                      key={skill.id} 
-                      style={{ 
-                        display: "flex", 
-                        alignItems: "center", 
-                        gap: "0.5rem", 
-                        padding: "0.4rem 0.8rem", 
-                        background: "rgba(255,255,255,0.03)", 
+                    <div
+                      key={skill.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        padding: "0.4rem 0.8rem",
+                        background: "rgba(255,255,255,0.03)",
                         border: `1px solid rgba(255,255,255,0.05)`,
-                        borderRadius: "var(--radius-md)" 
+                        borderRadius: "var(--radius-md)"
                       }}
                     >
                       {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} style={{ width: "16px", height: "16px" }} />}
                       <span style={{ fontSize: "0.9rem", fontWeight: "500" }}>{skill.name}</span>
-                      <span 
-                        style={{ 
-                          width: "6px", 
-                          height: "6px", 
-                          borderRadius: "50%", 
+                      <span
+                        style={{
+                          width: "6px",
+                          height: "6px",
+                          borderRadius: "50%",
                           background: getProficiencyColor(skill.proficiency),
                           marginLeft: "4px"
                         }}
@@ -327,7 +327,7 @@ export default function PortfolioViewer({ userId }) {
       {/* Hackathons, Certifications & Achievements Section */}
       {(hackathons?.length > 0 || certifications?.length > 0 || achievements?.length > 0) && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }} className="grid-2 animate-fade-in">
-          
+
           {/* Hackathons */}
           {hackathons && hackathons.length > 0 && (
             <section>
@@ -358,7 +358,7 @@ export default function PortfolioViewer({ userId }) {
 
           {/* Certifications & Achievements */}
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-            
+
             {certifications && certifications.length > 0 && (
               <section>
                 <h2 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>

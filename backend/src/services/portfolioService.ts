@@ -63,20 +63,23 @@ export default class PortfolioService {
   // ── Public ─────────────────────────────────────────────────────────────────
 
   /** Returns the full portfolio for any user by their ID (public read) */
-  async getFullPortfolio(userId: string) {
-    const user = await userRepo.findById(userId);
-    const { password, refreshToken, totpSecret, ...publicUser } = user;
+  async getFullPortfolio(username: string) {
+    const user = await userRepo.findOne({ username });
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id, password, refreshToken, totpSecret, ...publicUser } = user;
 
     const [profile, education, experience, projects, hackathons, skills, certifications, achievements] =
       await Promise.all([
-        profileRepo.findByUserId(userId),
-        educationRepo.findAllByUserId(userId),
-        experienceRepo.findAllByUserId(userId),
-        projectRepo.findAllByUserId(userId),
-        hackathonRepo.findAllByUserId(userId),
-        skillRepo.findAllByUserId(userId),
-        certRepo.findAllByUserId(userId),
-        achievementRepo.findAllByUserId(userId),
+        profileRepo.findByUserId(id),
+        educationRepo.findAllByUserId(id),
+        experienceRepo.findAllByUserId(id),
+        projectRepo.findAllByUserId(id),
+        hackathonRepo.findAllByUserId(id),
+        skillRepo.findAllByUserId(id),
+        certRepo.findAllByUserId(id),
+        achievementRepo.findAllByUserId(id),
       ]);
 
     return {
@@ -94,8 +97,17 @@ export default class PortfolioService {
 
   // ── Profile ────────────────────────────────────────────────────────────────
 
-  async getProfile(userId: string) {
-    return profileRepo.findByUserId(userId);
+  async getProfile(username: string) {
+    const user = await userRepo.findOne({ username });
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    const profile = await profileRepo.findOne({ where: { userId: id } });
+    if (!profile) {
+      throw new NotFoundError("Profile not found");
+    }
+    return profile;
   }
 
   async upsertProfile(userId: string, data: UpsertProfileBody) {
@@ -104,8 +116,13 @@ export default class PortfolioService {
 
   // ── Education ──────────────────────────────────────────────────────────────
 
-  async getAllEducation(userId: string) {
-    return educationRepo.findAllByUserId(userId);
+  async getAllEducation(username: string) {
+    const user = await userRepo.findOne({ username });
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return educationRepo.findAllByUserId(id);
   }
 
   async createEducation(userId: string, data: CreateEducationBody) {
@@ -135,8 +152,13 @@ export default class PortfolioService {
 
   // ── Experience ─────────────────────────────────────────────────────────────
 
-  async getAllExperience(userId: string) {
-    return experienceRepo.findAllByUserId(userId);
+  async getAllExperience(username: string) {
+    const user = await userRepo.findOne(username);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return experienceRepo.findAllByUserId(id);
   }
 
   async createExperience(userId: string, data: CreateExperienceBody) {
@@ -166,12 +188,22 @@ export default class PortfolioService {
 
   // ── Projects ───────────────────────────────────────────────────────────────
 
-  async getAllProjects(userId: string) {
-    return projectRepo.findAllByUserId(userId);
+  async getAllProjects(username: string) {
+    const user = await userRepo.findOne({ username });
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return projectRepo.findAllByUserId(id);
   }
 
-  async getFeaturedProjects(userId: string) {
-    return projectRepo.findFeaturedByUserId(userId);
+  async getFeaturedProjects(username: string) {
+    const user = await userRepo.findOne({ username });
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return projectRepo.findFeaturedByUserId(id);
   }
 
   async createProject(userId: string, data: CreateProjectBody) {
@@ -201,8 +233,13 @@ export default class PortfolioService {
 
   // ── Hackathons ─────────────────────────────────────────────────────────────
 
-  async getAllHackathons(userId: string) {
-    return hackathonRepo.findAllByUserId(userId);
+  async getAllHackathons(username: string) {
+    const user = await userRepo.findOne({ username });
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return hackathonRepo.findAllByUserId(id);
   }
 
   async createHackathon(userId: string, data: CreateHackathonBody) {
@@ -230,12 +267,22 @@ export default class PortfolioService {
 
   // ── Skills ─────────────────────────────────────────────────────────────────
 
-  async getAllSkills(userId: string) {
-    return skillRepo.findAllByUserId(userId);
+  async getAllSkills(username: string) {
+    const user = await userRepo.findOne(username);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return skillRepo.findAllByUserId(id);
   }
 
-  async getSkillsByCategory(userId: string, category: string) {
-    return skillRepo.findByCategory(userId, category);
+  async getSkillsByCategory(username: string, category: string) {
+    const user = await userRepo.findOne(username);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return skillRepo.findByCategory(id, category);
   }
 
   async createSkill(userId: string, data: CreateSkillBody) {
@@ -256,8 +303,13 @@ export default class PortfolioService {
 
   // ── Certifications ─────────────────────────────────────────────────────────
 
-  async getAllCertifications(userId: string) {
-    return certRepo.findAllByUserId(userId);
+  async getAllCertifications(username: string) {
+    const user = await userRepo.findOne({ username });
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return certRepo.findAllByUserId(id);
   }
 
   async createCertification(userId: string, data: CreateCertificationBody) {
@@ -287,8 +339,13 @@ export default class PortfolioService {
 
   // ── Achievements ───────────────────────────────────────────────────────────
 
-  async getAllAchievements(userId: string) {
-    return achievementRepo.findAllByUserId(userId);
+  async getAllAchievements(username: string) {
+    const user = await userRepo.findOne({ username });
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const { id } = user;
+    return achievementRepo.findAllByUserId(id);
   }
 
   async createAchievement(userId: string, data: CreateAchievementBody) {

@@ -1,26 +1,43 @@
 import React, { useState, useEffect } from "react";
 import Auth from "./components/Auth";
+import { GitBranch } from "lucide-react"
 import Dashboard from "./components/Dashboard";
 import PortfolioViewer from "./components/PortfolioViewer";
-import { getCurrentUser, clearAuthSession } from "./services/api";
+import { getCurrentUser, clearCurrentUser } from "./services/api";
 
 export default function App() {
-  const [user, setUser] = useState(getCurrentUser());
+  const [user, setUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
   const [route, setRoute] = useState({ name: "home" });
 
+
+
   useEffect(() => {
-    // Determine initial route
+    // Fetch current user on mount
+    const fetchUser = async () => {
+      try {
+        const current = await getCurrentUser();
+        setUser(current);
+      } catch (e) {
+        console.error('Failed to fetch current user', e);
+      } finally {
+        setLoadingUser(false);
+      }
+    };
+    fetchUser();
+
+    // Determine initial route and handle hash changes
     const handleHashChange = () => {
       const hash = window.location.hash;
       if (hash.startsWith("#/user/")) {
-        const userId = hash.replace("#/user/", "");
-        setRoute({ name: "portfolio", userId });
+        const username = hash.replace("#/user/", "");
+        setRoute({ name: "portfolio", username });
       } else {
         setRoute({ name: "home" });
       }
     };
 
-    // Listen to hash changes
+    // Set up listeners after fetching user
     window.addEventListener("hashchange", handleHashChange);
     handleHashChange(); // Run on initial load
 
@@ -42,13 +59,15 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    clearAuthSession();
+    clearCurrentUser();
     setUser(null);
     window.location.hash = "";
   };
 
   return (
     <div className="app-container">
+      {loadingUser && <div style={{ padding: "2rem", textAlign: "center" }}>Loading...</div>}
+
       {/* Background glow layers */}
       <div className="bg-glow bg-glow-1"></div>
       <div className="bg-glow bg-glow-2"></div>
@@ -59,21 +78,34 @@ export default function App() {
           CMS Portfolio
         </a>
         <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          {user && (
+          {user && user.id && (
             <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-              Signed in as <strong>{user.email}</strong>
+              Signed in as <strong>{user?.username ?? "N/A"}</strong>
+              <br />
+              ID: {user?.id ?? "N/A"}
+              <br />
+              Email: {user?.email ?? "N/A"}
             </span>
           )}
-          <a href="https://github.com" target="_blank" rel="noreferrer" style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textDecoration: "none" }}>
+          {user?.github && <a href={user?.github} target="_blank" rel="noreferrer" style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textDecoration: "none" }}>
             GitHub
-          </a>
+          </a>}
+          {user?.linkedin && <a href={user?.linkedin} target="_blank" rel="noreferrer" style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textDecoration: "none" }}>
+            Linkedin
+          </a>}
+          {user?.twitter && <a href={user?.twitter} target="_blank" rel="noreferrer" style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textDecoration: "none" }}>
+            Twitter
+          </a>}
+          {user?.website && <a href={user?.website} target="_blank" rel="noreferrer" style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textDecoration: "none" }}>
+            Website
+          </a>}
         </div>
       </nav>
 
       {/* Main Content Area */}
       <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         {route.name === "portfolio" ? (
-          <PortfolioViewer userId={route.userId} />
+          <PortfolioViewer username={route.username} />
         ) : user ? (
           <Dashboard user={user} onLogout={handleLogout} />
         ) : (
@@ -83,8 +115,10 @@ export default function App() {
 
       {/* Footer */}
       <footer style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)", fontSize: "0.85rem", borderTop: "1px solid var(--border-color)", marginTop: "auto" }}>
-        &copy; {new Date().getFullYear()} Antigravity Portfolio Network. All rights reserved.
+        &copy; {new Date().getFullYear()} CMS Portfolio. All rights reserved.
+        <GitBranch /><a href="https://github.com/nishur31" target="_blank" rel="noreferrer" style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textDecoration: "none" }}>
+        </a>
       </footer>
-    </div>
+    </div >
   );
 }

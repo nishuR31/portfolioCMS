@@ -4,7 +4,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 
 import AuthService from "../services/authService.js";
 import asyncHandler from "../utils/common/asyncHandler.js";
-import { UnauthorizedError } from "../utils/errors/error.js";
+import { ForbiddenError, UnauthorizedError } from "../utils/errors/error.js";
 import { sendSuccess } from "../utils/common/response.js";
 import { STATUS_CODES } from "../utils/common/constants.js";
 import { LoginBody, RegisterBody } from "../types/index.js";
@@ -81,11 +81,11 @@ export const googleCallback = asyncHandler(
 
 export const passless = asyncHandler(
   async (req: FastifyRequest<{ Body: { email: string } }>, res: FastifyReply) => {
-    let { email, name, token, role } = await authService.passless(req.body.email);
+    let { email, name, token, username } = await authService.passless(req.body.email);
     let link = buildUrl(req, {
       prefix: "/api/v1/auth",
       path: "/magic/verify",
-      query: { token, role },
+      query: { token, username },
     });
     await sendPasswordlessLoginEmail(email, name ?? "User", 5, link);
     sendSuccess(res, "Passwordless login link successfully sent", link, 200);
@@ -93,12 +93,12 @@ export const passless = asyncHandler(
 );
 export const testPassless = asyncHandler(
   async (req: FastifyRequest, res: FastifyReply) => {
-    let { email, name, token, role } = await authService.testPassless();
+    let { email, name, token, username } = await authService.testPassless();
 
     let link = buildUrl(req, {
       prefix: "/api/v1/auth",
       path: "/test/magic/verify",
-      query: { token, role },
+      query: { token, username },
     });
     await sendPasswordlessLoginEmail(email, name ?? "User", 5, link);
     sendSuccess(res, "Test passwordless login link successfully sent", link, 200);
@@ -109,13 +109,13 @@ export const passlessVerify = asyncHandler(
     req: FastifyRequest<{
       Querystring: {
         token: string;
-        role: string;
+        username: string;
       };
     }>,
     res: FastifyReply,
   ) => {
-    let { token, role } = req.query;
-    let response = await authService.passlessVerify(token, role);
+    let { token, username } = req.query;
+    let response = await authService.passlessVerify(token, username);
 
     sendSuccess(res, "Welcome back", response, 200);
   },
@@ -125,13 +125,13 @@ export const testPasslessVerify = asyncHandler(
     req: FastifyRequest<{
       Querystring: {
         token: string;
-        role: string;
+        username: string;
       };
     }>,
     res: FastifyReply,
   ) => {
-    let { token, role } = req.query;
-    let response = await authService.testPasslessVerify(token, role);
+    let { token, username } = req.query;
+    let response = await authService.testPasslessVerify(token, username);
 
     sendSuccess(res, "Test Welcome back", response, 200);
   },
@@ -155,8 +155,8 @@ export const register = asyncHandler(
 );
 
 export const login = asyncHandler(async (req: LoginRequest, res: FastifyReply) => {
-  const { email, password, totpToken } = req.body;
-  const result = await authService.login(email, password, totpToken);
+  const { identifier, password, totpToken } = req.body;
+  const result = await authService.login(identifier, password, totpToken);
 
   if (result.requireTotp) {
     sendSuccess(
@@ -182,7 +182,7 @@ export const login = asyncHandler(async (req: LoginRequest, res: FastifyReply) =
 export const logout = asyncHandler(async (req: FastifyRequest, res: FastifyReply) => {
   const token =
     req.headers.authorization?.split(" ")[1] || req.cookies.refreshToken || "";
-  await authService.logout(req.user!.id, token);
+  await authService.logout(req.user?.id as string, token);
 
   res.clearCookie("refreshToken");
   res.clearCookie("accessToken");
@@ -210,10 +210,28 @@ export const me = asyncHandler(
     req: FastifyRequest,
     res: FastifyReply,
   ) => {
-    const user = await authService.me(req.user!.id);
+    const userId = req.user?.id as string;
+    if (!userId) {
+      throw new UnauthorizedError("You are not authorized, Please try loggin in again.");
+    }
+    const user = await authService.me(userId);
     sendSuccess(res, "User fetched successfully", user, STATUS_CODES.OK);
   },
 );
+
+export const username = asyncHandler(
+  async (
+    req: FastifyRequest<{ Params: { username: string } }>,
+    res: FastifyReply,
+  ) => {
+    if (req.user?.username && req.user?.username !== req.params.username) {
+      throw new ForbiddenError("You are not authorized to fetch this user");
+    }
+    const user = await authService.username(req.params!.username);
+    sendSuccess(res, "User fetched successfully", user, STATUS_CODES.OK);
+  },
+);
+
 
 
 export const changePassword = asyncHandler(
@@ -224,7 +242,7 @@ export const changePassword = asyncHandler(
     const token =
       req.headers.authorization?.split(" ")[1] || req.cookies.accessToken || "";
     await authService.changePassword(
-      req.user!.id,
+      req.user?.id as string,
       req.body.currentPassword,
       req.body.newPassword,
       token,
@@ -239,7 +257,7 @@ export const enableTotp = asyncHandler(
     req: FastifyRequest<{ Body: { userId: string; password: string } }>,
     res: FastifyReply,
   ) => {
-    const result = await authService.enableTotp(req.user!.id, req.body.password);
+    const result = await authService.enableTotp(req.user?.id as string, req.body.password);
     sendSuccess(
       res,
       "TOTP setup initiated. Scan QR code and verify.",
@@ -254,7 +272,7 @@ export const verifyTotp = asyncHandler(
     req: FastifyRequest<{ Body: { userId: string; token: string } }>,
     res: FastifyReply,
   ) => {
-    await authService.verifyAndActivateTotp(req.user!.id, req.body.token);
+    await authService.verifyAndActivateTotp(req.user!.id as string, req.body.token);
     sendSuccess(res, "TOTP enabled successfully", null, STATUS_CODES.OK);
   },
 );
@@ -264,7 +282,7 @@ export const disableTotp = asyncHandler(
     req: FastifyRequest<{ Body: { userId: string; password: string } }>,
     res: FastifyReply,
   ) => {
-    await authService.disableTotp(req.user!.id, req.body.password);
+    await authService.disableTotp(req.user!.id as string, req.body.password);
     sendSuccess(res, "TOTP disabled successfully", null, STATUS_CODES.OK);
   },
 );

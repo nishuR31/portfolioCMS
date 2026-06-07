@@ -1,13 +1,17 @@
 import React, { useState } from "react";
-import { api, setAuthSession } from "../services/api";
-import { LogIn, UserPlus, KeyRound, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { api, setCurrentUser } from "../services/api";
+import { LogIn, UserPlus, KeyRound, ShieldAlert, CheckCircle2, Eye, EyeOff } from "lucide-react";
 
 export default function Auth({ onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
+    identifier: "",
   });
 
   const [totpRequired, setTotpRequired] = useState(false);
@@ -32,12 +36,12 @@ export default function Auth({ onAuthSuccess }) {
       if (totpRequired) {
         // Submit standard login again but with totpToken
         const res = await api.auth.login({
-          email: formData.email,
+          identifier: formData.identifier,
           password: formData.password,
           totpToken: totpToken,
         });
 
-        setAuthSession(res.data.user);
+        setCurrentUser(res.data.user);
         setSuccessMsg("Logged in successfully!");
         setTimeout(() => {
           onAuthSuccess(res.data.user);
@@ -47,7 +51,7 @@ export default function Auth({ onAuthSuccess }) {
 
       if (isLogin) {
         const res = await api.auth.login({
-          email: formData.email,
+          identifier: formData.identifier,
           password: formData.password,
         });
 
@@ -60,20 +64,20 @@ export default function Auth({ onAuthSuccess }) {
         }
 
         // Standard successful login
-        setAuthSession(res.data.user);
+        setCurrentUser(res.data.user);
         setSuccessMsg("Logged in successfully!");
         setTimeout(() => {
           onAuthSuccess(res.data.user);
         }, 800);
       } else {
         const res = await api.auth.register({
-          name: formData.name,
+          username: formData.username,
           email: formData.email,
           password: formData.password,
         });
 
         // Registration success
-        setAuthSession(res.data.user);
+        setCurrentUser(res.data.user);
         setSuccessMsg("Registered successfully!");
         setTimeout(() => {
           onAuthSuccess(res.data.user);
@@ -137,39 +141,54 @@ export default function Auth({ onAuthSuccess }) {
           ) : (
             /* Standard Auth Fields */
             <>
-              {!isLogin && (
+              {isLogin ? (
                 <div className="form-group">
-                  <label className="form-label" htmlFor="name">Full Name</label>
+                  <label className="form-label" htmlFor="identifier">Username or Email</label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
+                    id="identifier"
+                    name="identifier"
                     className="form-input"
-                    placeholder="Jane Doe"
+                    placeholder="jane_doe or jane@example.com"
                     required
-                    value={formData.name}
+                    value={formData.identifier}
                     onChange={handleChange}
                   />
                 </div>
+              ) : (
+                <>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="username">Username </label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      className="form-input"
+                      placeholder="jane_doe"
+                      required
+                      value={formData.username}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="email">Email Address</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      className="form-input"
+                      placeholder="jane@example.com"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </>
               )}
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="email">Email Address</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  className="form-input"
-                  placeholder="jane@example.com"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
 
               <div className="form-group" style={{ marginBottom: "1.5rem" }}>
                 <label className="form-label" htmlFor="password">Password</label>
-                <input
+                <div style={{ position: "relative", display: "flex", alignItems: "center" }}><input
                   type="password"
                   id="password"
                   name="password"
@@ -179,6 +198,10 @@ export default function Auth({ onAuthSuccess }) {
                   value={formData.password}
                   onChange={handleChange}
                 />
+                  {isPasswordVisible ?
+                    <EyeOff className="icon" size={18} style={{ position: "absolute", right: "1rem", cursor: "pointer" }} onClick={() => setIsPasswordVisible(!isPasswordVisible)} /> :
+                    <Eye className="icon" size={18} style={{ position: "absolute", right: "1rem", cursor: "pointer" }} onClick={() => setIsPasswordVisible(!isPasswordVisible)} />}
+                </div>
               </div>
             </>
           )}

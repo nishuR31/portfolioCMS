@@ -15,9 +15,9 @@
 import "fastify";
 
 export interface AuthUser {
-  id: string;
-  email: string;
-  role: string;
+  id?: string;
+  email?: string;
+  username?: string;
 }
 
 declare module "fastify" {

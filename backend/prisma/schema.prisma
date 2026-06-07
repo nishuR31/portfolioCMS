@@ -7,11 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
 enum ExperienceType {
   FULL_TIME
   PART_TIME
@@ -33,13 +28,13 @@ model User {
   email    String  @unique
   phone    String?
   password String  @map("hashed_password")
-  role     Role    @default(USER)
 
   avatarUrl String?
 
   isActive     Boolean  @default(true)
   lastLogin    DateTime @default(now())
   refreshToken String?
+  username     String? @unique
 
   totpSecret    String?
   isTotpEnabled Boolean @default(false)
@@ -57,7 +52,6 @@ model User {
   achievements   Achievement[]
 
   @@index([email])
-  @@index([role])
   @@map("users")
 }
 
