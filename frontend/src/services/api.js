@@ -2,6 +2,7 @@ const BACKEND_URL =
   import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const BASE_URL = `${BACKEND_URL}/api/v1`;
+export const apiDomain = BACKEND_URL;
 
 let _user = null;
 

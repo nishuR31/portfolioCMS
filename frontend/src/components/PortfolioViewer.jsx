@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { api } from "../services/api";
 import {
   Globe, FileText, MapPin, Briefcase, GraduationCap, Code, Trophy,
@@ -28,7 +29,8 @@ const Twitter = ({ size = 20, ...props }) => (
 );
 
 
-export default function PortfolioViewer({ username }) {
+export default function PortfolioViewer() {
+  const { username } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -106,7 +108,7 @@ export default function PortfolioViewer({ username }) {
   };
 
   return (
-    <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "3rem 1.5rem", display: "flex", flexDirection: "column", gap: "3rem", width: "100%" }}>
+    <div className="flex flex-col gap-12 w-full max-w-5xl mx-auto px-4 md:px-8 py-16 min-h-[calc(100vh-100px)]">
 
       {/* Profile/Hero Section */}
       <header className="glass-panel animate-fade-in" style={{ padding: "3rem 2rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "1.5rem" }}>

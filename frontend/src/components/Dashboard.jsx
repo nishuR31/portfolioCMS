@@ -5,8 +5,11 @@ import {
   Settings, Plus, Trash2, Edit3, X, Check, ExternalLink,
   ShieldAlert, CheckCircle2
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
-export default function Dashboard({ user, onLogout }) {
+export default function Dashboard() {
+  const { user } = useAuth();
+  
   const [activeTab, setActiveTab] = useState("profile");
   const [profile, setProfile] = useState({
     headline: "", bio: "", location: "", avatarUrl: "", resumeUrl: "",
@@ -191,26 +194,26 @@ export default function Dashboard({ user, onLogout }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", padding: "2rem 1rem", maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
+    <div className="flex flex-col gap-8 p-4 md:p-8 max-w-7xl mx-auto w-full min-h-[calc(100vh-100px)]">
       {/* Header Panel */}
-      <div className="glass-panel" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.5rem 2rem", flexWrap: "wrap", gap: "1rem" }}>
+      <div className="glass-panel backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)] flex justify-between items-center p-6 md:px-8 flex-wrap gap-4 rounded-2xl">
         <div>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: "700" }}>Hello, {user.name}!</h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Manage your resume data or view your public profile.</p>
+          <h2 className="text-2xl font-bold text-white mb-1">Hello, {user.name}!</h2>
+          <p className="text-slate-400 text-sm">Manage your resume data or view your public profile.</p>
         </div>
-        <div style={{ display: "flex", gap: "1rem" }}>
-          <a href={`/#/user/${user.username}`} target="_blank" rel="noreferrer" className="btn btn-secondary" style={{ textDecoration: "none" }}>
+        <div className="flex gap-4">
+          <a href={`/#/user/${user.username}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white font-medium transition-colors">
             <ExternalLink size={16} /> Public Portfolio
           </a>
-          <button onClick={onLogout} className="btn btn-danger">Sign Out</button>
+          <button onClick={onLogout} className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-300 rounded-lg font-medium transition-colors">Sign Out</button>
         </div>
       </div>
 
       {/* Main Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "250px 1fr", gap: "2rem" }} className="grid-2">
+      <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-8">
 
         {/* Navigation Sidebar */}
-        <div className="glass-panel" style={{ display: "flex", flexDirection: "column", padding: "1rem", gap: "0.25rem", height: "fit-content" }}>
+        <div className="glass-panel backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)] flex flex-col p-4 gap-2 rounded-2xl h-fit">
           {[
             { id: "profile", label: "Profile", icon: <User size={18} /> },
             { id: "education", label: "Education", icon: <GraduationCap size={18} /> },
@@ -224,21 +227,11 @@ export default function Dashboard({ user, onLogout }) {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem",
-                padding: "0.75rem 1rem",
-                background: activeTab === tab.id ? "var(--primary-gradient)" : "none",
-                border: "none",
-                color: activeTab === tab.id ? "white" : "var(--text-secondary)",
-                borderRadius: "var(--radius-md)",
-                cursor: "pointer",
-                textAlign: "left",
-                fontFamily: "var(--font-primary)",
-                fontWeight: "500",
-                transition: "var(--transition)"
-              }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
+                activeTab === tab.id 
+                  ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" 
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              }`}
             >
               {tab.icon}
               {tab.label}
