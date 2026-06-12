@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { GitBranch, Moon, Sun, LayoutDashboard, LogOut, GitBranchIcon, GitGraph } from "lucide-react";
 import { useAuth } from "./context/AuthContext";
 import { useTheme } from "./context/ThemeContext";
@@ -13,16 +13,16 @@ import { SiGithub } from "react-icons/si";
 export default function App() {
   const { user, loading, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-
+  const navigate = useNavigate();
   const dockItems = [
-    { icon: <HomeIcon size={18} />, label: 'Home', onClick: () => <Link to="/" /> },
-    { icon: <FileText size={18} />, label: 'Docs', onClick: () => <Link to="/docs" /> },
-    { icon: <HelpCircle size={18} />, label: 'FAQ', onClick: () => <Link to="/faq" /> },
+    { icon: <HomeIcon size={18} />, label: 'Home', onClick: () => navigate("/") },
+    { icon: <FileText size={18} />, label: 'Docs', onClick: () => navigate("/docs") },
+    { icon: <HelpCircle size={18} />, label: 'FAQ', onClick: () => navigate("/faq") },
     ...(user ? [
-      { icon: <LayoutDashboard size={18} />, label: 'Dashboard', onClick: () => <Link to="/dashboard" /> },
-      { icon: <UserIcon size={18} />, label: 'Profile', onClick: () => <Link to={`/user/${user.username}`} /> },
+      { icon: <LayoutDashboard size={18} />, label: 'Dashboard', onClick: () => navigate("/dashboard") },
+      { icon: <UserIcon size={18} />, label: 'Profile', onClick: () => navigate(`/user/${user.username}`) },
     ] : [
-      { icon: <UserIcon size={18} />, label: 'Login', onClick: () => <Link to="/login" /> }
+      { icon: <UserIcon size={18} />, label: 'Login', onClick: () => navigate("/login") }
     ])
   ];
 
