@@ -15,14 +15,14 @@ export default function App() {
   const { theme, toggleTheme } = useTheme();
 
   const dockItems = [
-    { icon: <HomeIcon size={18} />, label: 'Home', onClick: () => window.location.href = "/" },
-    { icon: <FileText size={18} />, label: 'Docs', onClick: () => window.location.href = "/docs" },
-    { icon: <HelpCircle size={18} />, label: 'FAQ', onClick: () => window.location.href = "/faq" },
+    { icon: <HomeIcon size={18} />, label: 'Home', onClick: () => <Link to="/" /> },
+    { icon: <FileText size={18} />, label: 'Docs', onClick: () => <Link to="/docs" /> },
+    { icon: <HelpCircle size={18} />, label: 'FAQ', onClick: () => <Link to="/faq" /> },
     ...(user ? [
-      { icon: <LayoutDashboard size={18} />, label: 'Dashboard', onClick: () => window.location.href = "/dashboard" },
-      { icon: <UserIcon size={18} />, label: 'Profile', onClick: () => window.location.href = `/user/${user.username}` },
+      { icon: <LayoutDashboard size={18} />, label: 'Dashboard', onClick: () => <Link to="/dashboard" /> },
+      { icon: <UserIcon size={18} />, label: 'Profile', onClick: () => <Link to={`/user/${user.username}`} /> },
     ] : [
-      { icon: <UserIcon size={18} />, label: 'Login', onClick: () => window.location.href = "/login" }
+      { icon: <UserIcon size={18} />, label: 'Login', onClick: () => <Link to="/login" /> }
     ])
   ];
 
