@@ -1,20 +1,11 @@
 import React from "react";
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { GitBranch, Moon, Sun, LayoutDashboard, LogOut, GitBranchIcon, GitGraph } from "lucide-react";
 import { useAuth } from "./context/AuthContext";
 import { useTheme } from "./context/ThemeContext";
-import { CustomCursor } from "./components/CustomCursor";
+import { Home } from "./pages/Home.jsx";
+import { AppRoutes } from "./route.jsx";
 
-import { Home } from "./pages/Home";
-import { Login } from "./pages/Login";
-import { Privacy } from "./pages/Privacy";
-import { FAQ } from "./pages/FAQ";
-import { Docs } from "./pages/Docs";
-
-import { NotFound } from "./pages/NotFound";
-
-import Dashboard from "./components/Dashboard";
-import PortfolioViewer from "./components/PortfolioViewer";
 import Dock from "./components/Dock";
 import { Home as HomeIcon, FileText, User as UserIcon, Settings, HelpCircle, FileJson } from "lucide-react";
 import { SiGithub } from "react-icons/si";
@@ -37,7 +28,6 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <CustomCursor />
 
       {/* Background glow layers */}
       <div className="bg-glow bg-glow-1"></div>
@@ -99,18 +89,7 @@ export default function App() {
       <main className="flex-1 flex flex-col relative z-1 w-full max-w-[100vw] overflow-x-hidden pb-24">
         {loading ? (
           <div style={{ display: "flex", justifyContent: "center", padding: "4rem", color: "var(--text-secondary)" }}>Loading session...</div>
-        ) : (
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/docs" element={<Docs />} />
-            <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" replace />} />
-            <Route path="/user/:username" element={<PortfolioViewer />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        )}
+        ) : (<AppRoutes />)}
       </main>
 
       {/* Footer */}

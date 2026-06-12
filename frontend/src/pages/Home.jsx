@@ -5,7 +5,6 @@ import { ScrollReveal } from "../components/ScrollReveal";
 import { Button } from "../components/ui/Button";
 import Ferrofluid from "../components/Ferrofluid";
 import DecryptedText from "../components/DecryptedText";
-import LogoLoop, { techLogos } from "../components/LogoLoop";
 
 
 export const Home = () => {
@@ -16,7 +15,7 @@ export const Home = () => {
       {/* Background Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <Ferrofluid
-          colors={['#6366f1', '#000000ff', '#d946ef']}
+          colors={['#000000', '#1776e2cf', '#2518dfff']}
           speed={0.3}
           scale={1.2}
           turbulence={1.5}
@@ -214,29 +213,7 @@ export const Home = () => {
             </div>
             <hr className="text-transparent py-20 w-lg h-20 justify-center self-center items-center my-20" />
 
-            <div className="w-full flex flex-col items-center py-10" style={{ height: '200px', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ height: '200px', position: 'relative', overflow: 'hidden' }}>
-                {/* Basic horizontal loop */}
-                <LogoLoop
-                  logos={techLogos}
-                  speed={100}
-                  direction="left"
-                  logoHeight={60}
-                  gap={60}
-                  hoverSpeed={0}
-                  scaleOnHover
-                  fadeOut
-                  fadeOutColor="#ffffff"
-                  ariaLabel="Technology partners"
-                />
 
-                {/* Vertical loop with deceleration on hover */}
-                <LogoLoop
-                  logos={techLogos}
-                  useCustomRender={false}
-                />
-              </div>
-            </div>
           </div>
         </div>
       </div>
